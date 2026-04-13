@@ -1,4 +1,3 @@
-%% two_species_paircool_full_fast.m
 % Two-species collective motion in circular confinement
 % - RR: stick (perfectly inelastic) when approaching & within r_coll
 %       Contact persists until pair distance > r_reset (hysteresis)
@@ -92,14 +91,14 @@ use_vicsek_B = true;
 % --- type-specific Vicsek-B ---
 r_vicsek_R   = 2.0;
 alpha_v_R    = 0.1;
-p_vicsek_R   = 1.0;     % 1이면 매 스텝 적용, 0.1이면 10% 확률
+p_vicsek_R   = 1.0;     % 10% percentage
 
 r_vicsek_G   = 2.0;
 alpha_v_G    = 0.1;
 p_vicsek_G   = 1.0;
 
 vicsek_warmup_R = 0;
-vicsek_warmup_G = 0;  % 예: green은 늦게 켜기
+vicsek_warmup_G = 0;  
 
 % Visualization / video
 plot_every = 8;
@@ -139,7 +138,7 @@ coll_GG = nan(Tsteps,1);
 coll_RG = nan(Tsteps,1);
 
 figure('Color','w');
-ax = axes('Position',[0.05 0.05 0.90 0.90]);  % 화면 거의 꽉 채움
+ax = axes('Position',[0.05 0.05 0.90 0.90]);  
 axis(ax,'equal'); box(ax,'on'); hold(ax,'on');
 set(ax,'XTick',[],'YTick',[]);
 
@@ -389,17 +388,17 @@ if ~isempty(pairsC)
             vn = dot(vrel, n);
 
             if vn < 0
-                e = e_GG;   % RG도 GG와 같은 restitution 사용
+                e = e_GG;   % RG = GG
                 j_imp = -(1+e) * vn / (1/mi + 1/mj);
                 Jvec  = j_imp * n;
 
                 vel(i,:) = vel(i,:) + (Jvec/mi);
                 vel(j,:) = vel(j,:) - (Jvec/mj);
 
-                J_RG = J_RG + norm(Jvec);   % 원하면 RG intensity로 저장
+                J_RG = J_RG + norm(Jvec);  
             end
 
-            % cooldown은 선택: 여전히 반복충돌이 거슬리면 RG에만 걸어도 됨
+            % cooldown when you give cool dwon step
             % cooldown(i,j) = uint16(cooldown_steps);
             % cooldown(j,i) = uint16(cooldown_steps);
         end
@@ -489,13 +488,13 @@ if mod(t,plot_every)==0 || t==1
     idx_show = 1:2:N;
 
     % fixed visual arrow length (in position units) so it “pops”
-    arrow_len = 1.5;   % 0.8~1.8 튜닝
+    arrow_len = 1.5;   % 0.8~1.8 
     vx = arrow_len * u_now(idx_show,1);
     vy = arrow_len * u_now(idx_show,2);
 
     q = quiver(ax, pos(idx_show,1), pos(idx_show,2), vx, vy, ...
                0, 'k', 'LineWidth', 1.0, 'MaxHeadSize', 3.2);
-    % scale=0 : 우리가 준 vx,vy 그대로 그림 (가장 직관적)
+    % scale=0 :
 
     xlim(ax, [-R_domain-3, R_domain+3]);
     ylim(ax, [-R_domain-3, R_domain+3]);
