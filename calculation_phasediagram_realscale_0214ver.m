@@ -7,23 +7,23 @@ p = T.p_red;
 v = T.mean_speed;
 x = T.corr_len;
 CMap=slanCM('iceburn');
-% ===== 옵션 =====
-useTop10PerSample = false;   % 샘플당 top10만 쓰기
+% option
+useTop10PerSample = false;   % when you want to use only top 10% of dataset
 topK              = 10;
-% 배경 표현 선택
-bgMode = "scatter";         % "scatter" 또는 "density" 또는 "none"
-bgAlpha = 0.1;             % scatter 투명도 (0.03~0.15 추천)
-densityBins = 30;           % density 모드 bin
+% Presentation
+bgMode = "scatter";         % "scatter" or "density" or "none"
+bgAlpha = 0.1;             % scatter transparency (0.03~0.15)
+densityBins = 30;           % density mode bin
 
-% 에러바/요약
+%  Error bar
 useSEM         = false;
-errVisualScale = 1.0;        % 시각적으로 에러바 줄이기(0~1)
+errVisualScale = 1.0;        % error bar visualization(0~1)
 useCaps        = true;
-capFrac        = 0.012;      % cap 길이 (축 범위 대비)
+capFrac        = 0.012;      % cap length
 
 markerSizeMean = 80;
 markerSizeBg   = 50;
-% ===== 1) TopK per sample 선택 =====
+% ===== 1) TopK per sample =====
 if useTop10PerSample
     if all(ismember(["seed","rep"], T.Properties.VariableNames))
         key = strcat("p",string(p),"_s",string(T.seed),"_r",string(T.rep));
@@ -31,7 +31,7 @@ if useTop10PerSample
         key = string(T.sample_id);
     else
         key = strcat("p",string(p));
-        warning("seed/rep/sample_id 없음 → p_red별 topK만 선택됨(샘플별 topK 아님).");
+        warning("No seed/rep/sample_id → topK from whole p_red.");
     end
     v0 = (v - min(v)) / max(eps,(max(v)-min(v)));
     x0 = (x - min(x)) / max(eps,(max(x)-min(x)));
@@ -104,7 +104,7 @@ vN = v / V_ref;
 xN = x / X_ref;
 
 
-% ===== 3) p_red별 요약(mean±SEM/STD) =====
+% ===== 3) p_red(mean±SEM/STD) =====
 p_list = sort(unique(p(:)))';
 nP = numel(p_list);
 
@@ -134,19 +134,19 @@ for i = 1:nP
     end
 end
 
-% ===== 4) 축 바꾸기: X=Correlation, Y=Speed =====
+% ===== 4) Change Axis : X=Correlation, Y=Speed =====
 Xmean = mX;  Ymean = mV;
 Xerr  = eX;  Yerr  = eV;
 
 Xbg = xN;    Ybg = vN;
 
-% ===== 5) 컬러(자연스러운 연속) =====
+% ===== 5) Color gradient  =====
 cmap = CMap;
 cval = (p_list - min(p_list)) / max(eps, (max(p_list)-min(p_list)));
 cidx = max(1, min(256, round(1 + cval*255)));
 cols = cmap(cidx,:);
 
-% bg scatter용: 각 점의 p값도 색으로
+% bg scatter
 pNorm = (p - min(p_list)) / max(eps, (max(p_list)-min(p_list)));
 pIdx  = max(1, min(256, round(1 + pNorm*255)));
 bgCol = cmap(pIdx,:);
@@ -160,34 +160,30 @@ xlabel("Normalized correlation length  \xi/<\xi>_{all}");
 ylabel("Normalized speed  <v>/<v>_{all}");
 title("Phase diagram by p_{red} (background + mean±error)");
 
-% 기준선 (1,1)
+% Origin line (1,1)
 xline(0.5,'k--','LineWidth',1.0,'Alpha',0.30);
 yline(0.75,'k--','LineWidth',1.0,'Alpha',0.30);
 
 % ----- (A) Background: scatter or density -----
 switch bgMode
     case "scatter"
-        % 뒤에 원 데이터 점들(색=p_red, 투명)
         scatter(Xbg, Ybg, markerSizeBg, bgCol, 'filled', ...
             'MarkerFaceAlpha', bgAlpha, 'MarkerEdgeAlpha', 0);
 
     case "density"
-        % 2D 밀도맵 (p_red 무시하고 전체 분포만)
         xedges = linspace(min(Xbg), max(Xbg), densityBins+1);
         yedges = linspace(min(Ybg), max(Ybg), densityBins+1);
         H = histcounts2(Xbg, Ybg, xedges, yedges);
 
-        % 보기 좋게 log 스케일(선택)
         H = log1p(H);
 
-        % imagesc는 축이 뒤집히기 쉬워서 transpose + axis xy
         imagesc(0.5*(xedges(1:end-1)+xedges(2:end)), ...
                 0.5*(yedges(1:end-1)+yedges(2:end)), ...
                 H');
         axis xy;
-        colormap(gca, "gray");    % 배경은 중립
+        colormap(gca, "gray");    
         set(gca,'CLim',[min(H(:)) max(H(:))]);
-        alpha(0.3);              % 배경 맵 투명도
+        alpha(0.3);              
 
     otherwise
         % none
@@ -196,7 +192,7 @@ end
 % ----- (B) mean trajectory line -----
 plot(Xmean, Ymean, '--', 'Color', [0.2 0.2 0.2], 'LineWidth', 1.5);
 
-% cap 길이
+% cap 
 xr = range(Xmean); if xr==0, xr = 1; end
 yr = range(Ymean); if yr==0, yr = 1; end
 capX = capFrac * xr;
