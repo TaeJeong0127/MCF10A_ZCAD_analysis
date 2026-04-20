@@ -117,7 +117,7 @@ def filter_approaching_trajectory_pairs(df, proximity_threshold=50, dT=6, veloci
                 pairs_to_check.append((label_i, label_j, int(min_frame)))
 
     elapsed_time = time.time() - start_time
-    print(f"⏱️ Time for filtering pairs: {elapsed_time:.2f} sec")
+    print(f"Time for filtering pairs: {elapsed_time:.2f} sec")
     return pairs_to_check
 
 
@@ -224,7 +224,7 @@ def classify_collision_events_with_overlap(df, trajectory_pairs, dT=6, overlap_t
         })
 
     elapsed = time.time() - start_time
-    print(f"⏱️ Time for classifying collisions: {elapsed:.2f} sec")
+    print(f"Time for classifying collisions: {elapsed:.2f} sec")
     return pd.DataFrame(collision_records)
 
 
@@ -246,7 +246,7 @@ def run_batch_collision_analysis(
     csv_files = glob.glob(os.path.join(csv_folder, "*.csv"))
 
     for csv_path in csv_files:
-        print(f"\n📂 Processing: {csv_path}")
+        print(f"\n Processing: {csv_path}")
         try:
             df = pd.read_csv(csv_path)
 
@@ -270,10 +270,10 @@ def run_batch_collision_analysis(
             base_name = os.path.splitext(os.path.basename(csv_path))[0]
             save_path = os.path.join(output_folder, f"{base_name}_collision.pkl")
             collision_df.to_pickle(save_path)
-            print(f"✅ Saved: {save_path}")
+            print(f"Saved: {save_path}")
 
         except Exception as e:
-            print(f"❌ Error processing {csv_path}: {e}")
+            print(f"Error processing {csv_path}: {e}")
 
 # Run code
 csv_folder = "/Users/jeonghyeontae/data_mesen_test/afterlabel"  # folder with csv files
