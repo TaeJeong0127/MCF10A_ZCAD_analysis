@@ -5,13 +5,13 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import matplotlib
 
-matplotlib.rcParams['font.family'] = 'Arial'  # 사용 가능한 다른 폰트: 'Helvetica', 'DejaVu Sans', 'Times New Roman' 등
-matplotlib.rcParams['font.size'] = 18         # 기본 폰트 크기
-matplotlib.rcParams['axes.titlesize'] = 20    # 제목 폰트 크기
-matplotlib.rcParams['axes.labelsize'] = 16   # 축 라벨 폰트 크기
-matplotlib.rcParams['xtick.labelsize'] = 14   # X축 눈금 폰트 크기
-matplotlib.rcParams['ytick.labelsize'] = 14   # Y축 눈금 폰트 크기
-matplotlib.rcParams['legend.fontsize'] = 12   # 범례 폰트 크기
+matplotlib.rcParams['font.family'] = 'Arial'  
+matplotlib.rcParams['font.size'] = 18         
+matplotlib.rcParams['axes.titlesize'] = 20    
+matplotlib.rcParams['axes.labelsize'] = 16   
+matplotlib.rcParams['xtick.labelsize'] = 14   
+matplotlib.rcParams['ytick.labelsize'] = 14   
+matplotlib.rcParams['legend.fontsize'] = 12   
 
 folder_path = "/Users/jeonghyeontae/data_for_mesen/color_change_output"
 
@@ -57,12 +57,11 @@ for traj_label, group in df_filtered.groupby('trajectory_label'):
             to_idx = color_to_idx[current_color]
             count_matrix[from_idx, to_idx] += 1
             transitioned = True
-            break  # 첫 전이만 기록
+            break 
 
         prev_color = current_color
 
     if not transitioned:
-        # 색이 바뀌지 않은 경우: 자기 자신으로의 전이로 기록
         idx = color_to_idx[initial_color]
         count_matrix[idx, idx] += 1
 
